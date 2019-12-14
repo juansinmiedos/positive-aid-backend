@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const logger = require('morgan');
 const path = require('path');
 const session = require('express-session')
-const MongoStore = require('connect-mongo')
+const MongoStore = require('connect-mongo')(session)
 const passport = require('./config/passport')
 const multer = require('./config/multer')
 const flash = require('connect-flash')
@@ -17,7 +17,7 @@ const cors = require('cors')
 mongoose
   .connect(process.env.DB, {useNewUrlParser: true})
   .then(x => {
-    console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`)
+    console.log(`Connected to Mongo! Database name: "${x.connection.name}"`)
   })
   .catch(err => {
     console.error('Error connecting to mongo', err)
@@ -43,7 +43,7 @@ app.use(cookieParser());
 
 app.use(
   session({
-    secret: 'SECRET',
+    secret: process.env.SECRET,
     cookie: { maxAge: 1000 * 60 * 60 * 24 },
     resave: false,
     saveUninitialized: false,
